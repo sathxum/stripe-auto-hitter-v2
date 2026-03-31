@@ -1,407 +1,353 @@
 # ⚡ Stripe Auto-Hitter Pro v2.0
 
-> **VPS-Hosted Edition** - No browser extension needed! Run on any VPS with free Cloudflare tunnel for public access.
+> **VPS-Hosted Edition** - No browser extension needed! Run on any VPS or Android (Termux) with free Cloudflare tunnel for public access.
 
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Puppeteer](https://img.shields.io/badge/Puppeteer-Latest-orange.svg)](https://pptr.dev/)
+[![Termux](https://img.shields.io/badge/Termux-Supported-orange.svg)](https://termux.dev/)
+
+---
+
+## 📱 TERMUX SETUP (Android) - Step by Step
+
+### Step 1: Install Termux
+
+1. Download Termux from **F-Droid** (recommended):
+   - Go to: https://f-droid.org/packages/com.termux/
+   - Download and install
+
+2. **OR** from GitHub (if F-Droid doesn't work):
+   - Go to: https://github.com/termux/termux-app/releases
+   - Download `termux-app_v0.118.0+github-debug_universal.apk`
+   - Install the APK
+
+⚠️ **Important**: Do NOT use Play Store version - it's outdated!
+
+---
+
+### Step 2: Grant Storage Permission
+
+Open Termux and run:
+
+```bash
+# Grant storage access (CRITICAL - needed to save files)
+termux-setup-storage
+```
+
+When prompted, tap **"Allow"** to give storage permission.
+
+Verify it worked:
+```bash
+ls ~/storage/shared
+```
+
+You should see your phone's folders (DCIM, Download, etc.)
+
+---
+
+### Step 3: Update Termux Packages
+
+```bash
+# Update package lists
+pkg update
+
+# Upgrade installed packages (type 'y' when asked)
+pkg upgrade -y
+```
+
+---
+
+### Step 4: Install Required Packages
+
+```bash
+# Install essential packages
+pkg install -y git nodejs wget curl
+
+# Verify installations
+node --version
+npm --version
+git --version
+```
+
+You should see version numbers for all three.
+
+---
+
+### Step 5: Clone the Repository
+
+```bash
+# Navigate to home directory
+cd ~
+
+# Clone the repo
+git clone https://github.com/sathxum/stripe-auto-hitter-v2.git
+
+# Enter the directory
+cd stripe-auto-hitter-v2
+
+# List files to verify
+ls
+```
+
+You should see: `package.json  public  README.md  scripts  server.js  utils`
+
+---
+
+### Step 6: Install Node Dependencies
+
+```bash
+# Install all npm packages (this may take 5-10 minutes)
+npm install
+
+# If you get errors, try with --force
+npm install --force
+```
+
+---
+
+### Step 7: Install Puppeteer Dependencies (Chrome)
+
+```bash
+# Install Chrome dependencies for Termux
+pkg install -y chromium
+
+# Set environment variable
+export PUPPETEER_EXECUTABLE_PATH=$(which chromium)
+
+# Verify Chrome is installed
+which chromium
+```
+
+---
+
+### Step 8: Start the Server
+
+```bash
+# Start the server
+node server.js
+```
+
+You should see:
+```
+╔════════════════════════════════════════════════════════════╗
+║           🚀 Stripe Auto-Hitter VPS Edition v2.0           ║
+╠════════════════════════════════════════════════════════════╣
+║  Server running on port: 3000                              ║
+║  Local URL: http://localhost:3000                          ║
+╚════════════════════════════════════════════════════════════╝
+```
+
+**Keep this terminal running!**
+
+---
+
+### Step 9: Get Public URL (New Session)
+
+**Open a NEW Termux session** (swipe right from left edge → "New Session"):
+
+```bash
+# Navigate to project
+cd ~/stripe-auto-hitter-v2
+
+# Install cloudflared (one time)
+pkg install -y cloudflared
+
+# Start the tunnel
+cloudflared tunnel --url http://localhost:3000
+```
+
+Wait 10-15 seconds. You'll see:
+```
+INF | Your quick Tunnel has been created! | url=https://xxxx.trycloudflare.com
+```
+
+**Copy this URL** - that's your public link! 🎉
+
+---
+
+### Step 10: Access From Browser
+
+1. Open any browser on your phone (Chrome, Firefox, etc.)
+2. Paste the URL: `https://xxxx.trycloudflare.com`
+3. Start using the tool!
+
+---
+
+## 🖥️ VPS SETUP (Ubuntu/Debian/CentOS)
+
+### Quick Deploy (3 Commands)
+
+```bash
+# 1. Clone repo
+git clone https://github.com/sathxum/stripe-auto-hitter-v2.git
+cd stripe-auto-hitter-v2
+
+# 2. Run setup (installs everything)
+bash scripts/setup.sh
+
+# 3. Start server
+./start.sh
+```
+
+### Get Public URL (New Terminal)
+```bash
+npm run tunnel
+```
+
+---
 
 ## 🚀 Features
 
-- ✅ **No Extension Required** - Runs directly on VPS with browser automation
-- 📱 **Mobile-Friendly UI** - Responsive design works on any device
-- 🌐 **Free Public URL** - Cloudflare tunnel (no account needed)
-- 🎲 **BIN-Based Card Generation** - Generate valid test cards from any BIN
-- ⏰ **Auto Session Refresh** - Automatically detects expired sessions
-- 🔒 **Stealth Mode** - Undetectable browser automation
-- 📊 **Real-time Progress** - Live updates via WebSocket
-- 📥 **Export Results** - Download results as CSV
-- ⚡ **Fast & Efficient** - Multi-threaded processing
+| Feature | Description |
+|---------|-------------|
+| **No Extension** | Runs directly with Puppeteer |
+| **Mobile UI** | Fully responsive design |
+| **Free Tunnel** | Cloudflare trycloudflare.com |
+| **Auto Session Refresh** | Detects expired Stripe sessions |
+| **BIN Generator** | Generate valid cards from any BIN |
+| **Real-time Updates** | WebSocket live progress |
+| **Export Results** | CSV download |
+
+---
 
 ## 📋 Requirements
 
-- **VPS/Server** with Ubuntu 18.04+, Debian 10+, CentOS 7+, or any Linux distro
-- **Node.js** 16+ (18+ recommended)
-- **RAM** 1GB minimum (2GB recommended)
-- **Root/SSH access** to install dependencies
+### For Termux (Android):
+- Android 7.0+
+- 2GB RAM recommended
+- 500MB free storage
+- Internet connection
 
-## 🛠️ Quick Setup (One Command)
+### For VPS:
+- Ubuntu 18.04+, Debian 10+, or CentOS 7+
+- Node.js 16+ (18+ recommended)
+- 1GB RAM minimum
+- Root/SSH access
 
+---
+
+## 🛠️ Common Issues & Fixes
+
+### Issue: "Cannot find module"
 ```bash
-# 1. Clone or upload files to your VPS
-cd /root  # or any directory you prefer
-
-# 2. Run the automated setup
-bash scripts/setup.sh
-
-# 3. Start the server
-./start.sh
-
-# 4. In another terminal, start the tunnel
-npm run tunnel
+# Reinstall dependencies
+rm -rf node_modules
+npm install
 ```
 
-That's it! You'll get a public URL like `https://something.trycloudflare.com` - open it in any browser!
-
-## 📖 Detailed Setup Instructions
-
-### Step 1: Prepare Your VPS
-
-Connect to your VPS via SSH:
+### Issue: "Chrome not found" (Termux)
 ```bash
-ssh root@your-vps-ip
+# Reinstall chromium
+pkg reinstall chromium
+export PUPPETEER_EXECUTABLE_PATH=$(which chromium)
 ```
 
-### Step 2: Upload Project Files
-
-**Option A: Using Git**
+### Issue: "Port already in use"
 ```bash
-git clone <your-repo-url> stripe-auto-hitter
-cd stripe-auto-hitter
+# Kill existing process
+pkill -f "node server.js"
+
+# Or use different port
+PORT=3001 node server.js
 ```
 
-**Option B: Using SCP (from local machine)**
+### Issue: "Permission denied" (scripts)
 ```bash
-# On your local machine
-scp -r stripe-auto-hitter root@your-vps-ip:/root/
+# Make scripts executable
+chmod +x scripts/*.sh
+chmod +x start.sh
 ```
 
-**Option C: Using wget/curl**
+### Issue: Tunnel not working
 ```bash
-# If you have a zip file hosted somewhere
-wget https://your-domain.com/stripe-auto-hitter.zip
-unzip stripe-auto-hitter.zip
-cd stripe-auto-hitter
+# Try manual tunnel
+cloudflared tunnel --url http://localhost:3000
 ```
 
-### Step 3: Run Setup Script
+---
 
-```bash
-bash scripts/setup.sh
+## 📁 File Structure
+
+```
+stripe-auto-hitter-v2/
+├── server.js              # Main Express + WebSocket server
+├── package.json           # Dependencies
+├── start.sh              # Quick start script
+├── .env.example          # Config template
+├── README.md             # This file
+│
+├── utils/
+│   ├── stripe-automation.js   # Puppeteer automation
+│   └── card-generator.js      # BIN card generator
+│
+├── public/               # Frontend (mobile-friendly)
+│   ├── index.html        # Main UI
+│   ├── app.js           # Frontend logic
+│   └── sw.js            # Service worker
+│
+└── scripts/
+    ├── setup.sh         # VPS setup
+    └── start-tunnel.sh  # Cloudflare tunnel
 ```
 
-This will:
-- ✅ Update system packages
-- ✅ Install Node.js 18.x (if not present)
-- ✅ Install all npm dependencies
-- ✅ Install Chrome/Puppeteer dependencies
-- ✅ Install Cloudflare Tunnel (cloudflared)
-- ✅ Create start scripts
-- ✅ Create systemd service (optional)
+---
 
-### Step 4: Start the Server
-
-```bash
-./start.sh
-```
-
-You should see output like:
-```
-╔════════════════════════════════════════════════════════════╗
-║           🚀 Stripe Auto-Hitter - Starting...              ║
-╚════════════════════════════════════════════════════════════╝
-
-📡 Starting server on port 3000...
-
-✅ Server started successfully!
-
-📱 Local URL: http://localhost:3000
-
-🌐 To expose to internet, run in another terminal:
-   npm run tunnel
-```
-
-### Step 5: Create Public URL (Cloudflare Tunnel)
-
-Open a **new terminal** (keep the server running) and run:
-
-```bash
-npm run tunnel
-```
-
-Or directly:
-```bash
-bash scripts/start-tunnel.sh
-```
-
-After a few seconds, you'll see:
-```
-╔════════════════════════════════════════════════════════════╗
-║              🎉 TUNNEL ESTABLISHED!                        ║
-╠════════════════════════════════════════════════════════════╣
-║                                                            ║
-║  Public URL:                                               ║
-║  https://abc123.trycloudflare.com                          ║
-║                                                            ║
-║  📱 Open this URL on your phone or any browser             ║
-║                                                            ║
-╚════════════════════════════════════════════════════════════╝
-```
-
-**Copy this URL and open it in any browser!** 📱💻
-
-## 🖥️ Usage Guide
+## 🎯 Usage Guide
 
 ### 1. Configure Your Session
 
-Open the tunnel URL in your browser and fill in:
+Open the tunnel URL and fill in:
 
 | Field | Description | Example |
 |-------|-------------|---------|
-| **Payment Link** | Your Stripe checkout URL | `https://buy.stripe.com/...` |
-| **BIN** | First 6+ digits for card gen | `424242` |
-| **Quantity** | Number of cards to try | `10` |
-| **Delay** | Delay between attempts (ms) | `3000` |
-| **Auto-refresh** | Auto-detect expired sessions | ✅ Enabled |
+| **Payment Link** | Stripe checkout URL | `https://buy.stripe.com/...` |
+| **BIN** | First 6+ digits | `424242` |
+| **Quantity** | Cards to try | `10` |
+| **Delay** | Delay in ms | `3000` |
 
 ### 2. Start Automation
 
-Click **"🚀 Start Automation"** and watch the magic happen!
+Click **"🚀 Start Automation"**
 
 ### 3. Monitor Progress
 
 - Real-time progress bar
 - Live status logs
 - Card-by-card results
-- Success/failure tracking
 
 ### 4. Export Results
 
-After completion, click **"📥 Export"** to download CSV with all results.
+Click **"📥 Export"** to download CSV.
+
+---
 
 ## 🔧 Advanced Configuration
 
-### Environment Variables
+### Environment Variables (.env file)
 
-Create a `.env` file for custom settings:
+```bash
+# Create .env file
+cp .env.example .env
+
+# Edit with nano
+nano .env
+```
 
 ```env
-# Server Configuration
 PORT=3000
 NODE_ENV=production
-
-# Puppeteer Configuration
 PUPPETEER_HEADLESS=true
-PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
-
-# Automation Settings
 DEFAULT_DELAY=3000
 DEFAULT_QUANTITY=10
-MAX_RETRIES=3
 ```
 
-### Systemd Service (Auto-start on Boot)
-
-```bash
-# Enable auto-start
-sudo systemctl enable stripe-hitter
-
-# Start service
-sudo systemctl start stripe-hitter
-
-# Check status
-sudo systemctl status stripe-hitter
-
-# View logs
-sudo journalctl -u stripe-hitter -f
-```
-
-### Using PM2 (Process Manager)
-
-```bash
-# Install PM2
-npm install -g pm2
-
-# Start with PM2
-pm2 start server.js --name "stripe-hitter"
-
-# Save PM2 config
-pm2 save
-pm2 startup
-
-# Monitor
-pm2 monit
-```
-
-## 📱 Mobile Access
-
-The UI is fully responsive and works perfectly on mobile:
-
-1. Start the tunnel on your VPS
-2. Copy the public URL
-3. Open on your phone's browser
-4. No app installation needed!
-
-**Pro Tip:** Add the page to your home screen for app-like experience!
-
-## 🔍 Troubleshooting
-
-### Issue: "Server not starting"
-
-```bash
-# Check if port 3000 is in use
-sudo lsof -i :3000
-
-# Kill existing process
-pkill -f 'node server.js'
-
-# Try again
-./start.sh
-```
-
-### Issue: "Chrome not found"
-
-```bash
-# Install Chrome manually (Ubuntu/Debian)
-wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-sudo apt update
-sudo apt install -y google-chrome-stable
-```
-
-### Issue: "Tunnel not working"
-
-```bash
-# Check cloudflared installation
-cloudflared --version
-
-# Try manual tunnel
-cloudflared tunnel --url http://localhost:3000
-```
-
-### Issue: "Out of memory"
-
-```bash
-# Add swap space
-sudo fallocate -l 2G /swapfile
-sudo chmod 600 /swapfile
-sudo mkswap /swapfile
-sudo swapon /swapfile
-```
-
-## 🌐 Supported VPS Providers
-
-Tested and working on:
-
-| Provider | Minimum Plan | Notes |
-|----------|--------------|-------|
-| **AWS EC2** | t2.micro (free tier) | 1GB RAM sufficient |
-| **Google Cloud** | e2-micro (free tier) | Works perfectly |
-| **DigitalOcean** | $5/mo droplet | Recommended |
-| **Vultr** | $5/mo instance | Fast setup |
-| **Linode** | Nanode $5/mo | Reliable |
-| **Hetzner** | CX11 (€3/mo) | Best value |
-| **Oracle Cloud** | Always Free tier | Completely free! |
-
-## 🛡️ Security Notes
-
-- The Cloudflare tunnel URL is temporary and changes on restart
-- No authentication by default - add your own if needed
-- Run behind reverse proxy (nginx) for production use
-- Use firewall rules to restrict access if needed
-
-### Add Basic Authentication (Optional)
-
-```bash
-# Install apache2-utils
-sudo apt install apache2-utils
-
-# Create password file
-sudo htpasswd -c /etc/nginx/.htpasswd admin
-
-# Add to nginx config
-location / {
-    auth_basic "Restricted";
-    auth_basic_user_file /etc/nginx/.htpasswd;
-    proxy_pass http://localhost:3000;
-}
-```
-
-## 📊 API Endpoints
-
-The server also provides REST API:
-
-### Generate Cards
-```bash
-POST /api/generate-cards
-Content-Type: application/json
-
-{
-  "bin": "424242",
-  "quantity": 10,
-  "format": "standard"
-}
-```
-
-### Validate BIN
-```bash
-POST /api/validate-bin
-Content-Type: application/json
-
-{
-  "bin": "424242"
-}
-```
-
-### Server Status
-```bash
-GET /api/status
-```
-
-## 🔄 Auto-Restart on Crash
-
-Create a simple watchdog script:
-
-```bash
-#!/bin/bash
-while true; do
-    if ! pgrep -f "node server.js" > /dev/null; then
-        echo "Server down, restarting..."
-        cd /root/stripe-auto-hitter && ./start.sh
-    fi
-    sleep 10
-done
-```
-
-Add to crontab:
-```bash
-@reboot /root/stripe-auto-hitter/watchdog.sh
-```
-
-## 📝 File Structure
-
-```
-stripe-auto-hitter/
-├── server.js              # Main Express server
-├── package.json           # Dependencies
-├── README.md             # This file
-├── start.sh              # Quick start script
-├── .env                  # Environment variables (optional)
-├── utils/
-│   ├── stripe-automation.js   # Puppeteer automation
-│   └── card-generator.js      # Card generation logic
-├── public/               # Frontend files
-│   ├── index.html        # Main UI
-│   ├── app.js           # Frontend logic
-│   └── sw.js            # Service worker (PWA)
-├── scripts/              # Setup scripts
-│   ├── setup.sh         # VPS setup
-│   └── start-tunnel.sh  # Cloudflare tunnel
-└── logs/                 # Log files (created on run)
-```
-
-## 🆘 Getting Help
-
-If you encounter issues:
-
-1. Check the logs in the terminal
-2. Review the troubleshooting section above
-3. Ensure all dependencies are installed
-4. Try restarting the server
+---
 
 ## ⚠️ Disclaimer
 
-This tool is for **educational and testing purposes only**. Use responsibly and in accordance with Stripe's terms of service and applicable laws. The authors are not responsible for any misuse.
+This tool is for **educational and testing purposes only**. Use responsibly and in accordance with Stripe's terms of service and applicable laws.
+
+---
 
 ## 📄 License
 
@@ -411,4 +357,4 @@ MIT License - Feel free to modify and distribute!
 
 **Made with ⚡ by the community**
 
-If this helped you, consider starring the repo! ⭐
+⭐ Star the repo if this helped you!

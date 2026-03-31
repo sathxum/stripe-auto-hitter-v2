@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#635bff">
+    <title>Stripe Auto-Hitter Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --stripe-purple: #635bff;
+            --stripe-dark: #0a2540;
+            --stripe-light: #f6f9fc;
+            --success: #00d4aa;
+            --error: #ff5a5a;
+            --warning: #ffc400;
+            --gradient: linear-gradient(135deg, #635bff 0%, #8b5cf6 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--stripe-light);
+            min-height: 100vh;
+            color: var(--stripe-dark);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            background: var(--gradient);
+            margin: -20px -20px 30px -20px;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 10px 40px rgba(99, 91, 255, 0.3);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            margin-top: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title .icon {
+            width: 36px;
+            height: 36px;
+            background: var(--gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--stripe-purple);
+            box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #a0aec0;
+        }
+
+        .input-hint {
+            font-size: 0.75rem;
+            color: #718096;
+            margin-top: 6px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* Toggle Switch */
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+        }
+
+        .toggle-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .toggle {
+            position: relative;
+            width: 50px;
+            height: 28px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #e2e8f0;
+            transition: 0.3s;
+            border-radius: 28px;
+        }
+
+        .toggle-slider:before {
+            content: "";
+            position: absolute;
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            transition: 0.3s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .toggle input:checked + .toggle-slider {
+            background: var(--stripe-purple);
+        }
+
+        .toggle input:checked + .toggle-slider:before {
+            transform: translateX(22px);
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 91, 255, 0.4);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 91, 255, 0.5);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: var(--stripe-dark);
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff5a5a 0%, #ff7b7b 100%);
+            color: white;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* Progress Section */
+        .progress-section {
+            display: none;
+        }
+
+        .progress-section.active {
+            display: block;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 15px;
+        }
+
+        .status-log {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'SF Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        .log-entry {
+            padding: 4px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            color: #a0aec0;
+            margin-right: 8px;
+        }
+
+        .log-success { color: var(--success); }
+        .log-error { color: var(--error); }
+        .log-info { color: var(--stripe-purple); }
+
+        /* Results Section */
+        .results-section {
+            display: none;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #718096;
+        }
+
+        .stat-success { color: var(--success); }
+        .stat-failed { color: var(--error); }
+        .stat-total { color: var(--stripe-purple); }
+
+        /* Cards List */
+        .cards-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .card-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            font-family: 'SF Mono', monospace;
+            font-size: 0.85rem;
+        }
+
+        .card-item.success {
+            border-left: 3px solid var(--success);
+        }
+
+        .card-item.failed {
+            border-left: 3px solid var(--error);
+        }
+
+        .card-number {
+            font-weight: 500;
+        }
+
+        .card-status {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .card-status.success {
+            background: rgba(0, 212, 170, 0.1);
+            color: var(--success);
+        }
+
+        .card-status.failed {
+            background: rgba(255, 90, 90, 0.1);
+            color: var(--error);
+        }
+
+        /* Connection Status */
+        .connection-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .connection-status.connected {
+            background: rgba(0, 212, 170, 0.9);
+            color: white;
+        }
+
+        .connection-status.disconnected {
+            background: rgba(255, 90, 90, 0.9);
+            color: white;
+        }
+
+        .connection-status.connecting {
+            background: rgba(255, 196, 0, 0.9);
+            color: var(--stripe-dark);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .modal h3 {
+            margin-bottom: 10px;
+        }
+
+        .modal p {
+            color: #718096;
+            margin-bottom: 20px;
+        }
+
+        /* Animations */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+
+        /* Responsive */
+        @media (max-width: 400px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header {
+                margin: -15px -15px 25px -15px;
+                padding: 25px 0;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="connection-status connecting" id="connectionStatus">
+        🔄 Connecting...
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>⚡ Stripe Auto-Hitter</h1>
+            <p>VPS Edition v2.0</p>
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                <span>Server Active</span>
+            </div>
+        </div>
+
+        <!-- Configuration Card -->
+        <div class="card">
+            <div class="card-title">
+                <div class="icon">⚙️</div>
+                <span>Configuration</span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Stripe Payment Link</label>
+                <input type="url" class="form-input" id="paymentLink" 
+                    placeholder="https://buy.stripe.com/...">
+                <div class="input-hint">Paste your Stripe checkout URL here</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">BIN (Bank Identification Number)</label>
+                <input type="text" class="form-input" id="bin" 
+                    placeholder="424242" maxlength="16">
+                <div class="input-hint">First 6+ digits of card (e.g., 424242)</div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Quantity</label>
+                    <input type="number" class="form-input" id="quantity" 
+                        value="10" min="1" max="100">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Delay (ms)</label>
+                    <input type="number" class="form-input" id="delay" 
+                        value="3000" min="1000" step="500">
+                </div>
+            </div>
+
+            <div class="toggle-group">
+                <span class="toggle-label">Auto-refresh on expiry</span>
+                <label class="toggle">
+                    <input type="checkbox" id="autoRefresh" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="card">
+            <button class="btn btn-primary" id="startBtn" onclick="startAutomation()">
+                <span>🚀</span> Start Automation
+            </button>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="card progress-section" id="progressSection">
+            <div class="card-title">
+                <div class="icon">⏳</div>
+                <span>Progress</span>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="progress-stats">
+                <span id="currentCard">Card 0/0</span>
+                <span id="progressPercent">0%</span>
+            </div>
+
+            <div class="status-log" id="statusLog">
+                <div class="log-entry">
+                    <span class="log-time">--:--:--</span>
+                    <span class="log-info">Waiting to start...</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button class="btn btn-danger" id="stopBtn" onclick="stopAutomation()">
+                    <span>⏹️</span> Stop
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="card results-section" id="resultsSection">
+            <div class="card-title">
+                <div class="icon">📊</div>
+                <span>Results</span>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-value stat-total" id="totalCount">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value stat-success" id="successCount">0</div>
+                    <div class="stat-label">Success</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value stat-failed" id="failedCount">0</div>
+                    <div class="stat-label">Failed</div>
+                </div>
+            </div>
+
+            <div class="cards-list" id="cardsList">
+                <!-- Cards will be added here -->
+            </div>
+
+            <div class="btn-group" style="margin-top: 20px;">
+                <button class="btn btn-secondary" onclick="exportResults()">
+                    <span>📥</span> Export
+                </button>
+                <button class="btn btn-primary" onclick="resetForm()">
+                    <span>🔄</span> New Run
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-title">
+                <div class="icon">🛠️</div>
+                <span>Quick Tools</span>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="generateCardsOnly()">
+                    <span>🎲</span> Gen Cards
+                </button>
+                <button class="btn btn-secondary" onclick="checkSession()">
+                    <span>🔍</span> Check Link
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <div class="modal-icon" id="modalIcon">ℹ️</div>
+            <h3 id="modalTitle">Title</h3>
+            <p id="modalMessage">Message</p>
+            <button class="btn btn-primary" onclick="closeModal()">OK</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

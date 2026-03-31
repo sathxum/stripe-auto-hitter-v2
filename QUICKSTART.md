@@ -1,68 +1,62 @@
 # 🚀 Quick Start Guide
 
-## Deploy in 5 Minutes!
+## Choose Your Platform:
 
-### 1. Upload to VPS
+### 📱 [TERMUX (Android) - Click Here](TERMUX_SETUP.md)
+Complete step-by-step guide for Android phones
+
+### 🖥️ [VPS (Linux Server) - See Below](#vps-setup)
+
+---
+
+## 🖥️ VPS SETUP
+
+### Requirements:
+- Ubuntu 18.04+, Debian 10+, or CentOS 7+
+- 1GB RAM minimum
+- Root/SSH access
+
+### Deploy in 3 Commands:
+
 ```bash
-# SSH into your VPS
-ssh root@YOUR_VPS_IP
+# 1. Clone repo
+git clone https://github.com/sathxum/stripe-auto-hitter-v2.git
+cd stripe-auto-hitter-v2
 
-# Create directory
-mkdir -p /root/stripe-auto-hitter && cd /root/stripe-auto-hitter
-
-# Upload all files (use SCP or paste content)
-```
-
-### 2. One-Command Setup
-```bash
+# 2. Run setup (installs everything)
 bash scripts/setup.sh
-```
 
-### 3. Start Server
-```bash
+# 3. Start server
 ./start.sh
 ```
 
-### 4. Get Public URL (New Terminal)
+### Get Public URL (New Terminal):
 ```bash
 npm run tunnel
 ```
 
-**Copy the URL and use it!** 🎉
+Copy the `https://xxxx.trycloudflare.com` URL and use it! 🎉
 
 ---
 
-## 📁 All Files You Need
+## 📱 TERMUX (Android) - 10 Steps
 
-### Root Files
-| File | Purpose |
-|------|---------|
-| `server.js` | Main backend server |
-| `package.json` | Dependencies |
-| `start.sh` | Quick start script |
-| `.env.example` | Config template |
-| `.gitignore` | Git ignore rules |
-| `README.md` | Full documentation |
-| `QUICKSTART.md` | This file |
+### Quick Overview:
 
-### Utils Folder (`utils/`)
-| File | Purpose |
-|------|---------|
-| `stripe-automation.js` | Puppeteer automation engine |
-| `card-generator.js` | BIN-based card generator |
+| Step | Action | Command |
+|------|--------|---------|
+| 1 | Install Termux (F-Droid) | Download from f-droid.org |
+| 2 | Grant storage | `termux-setup-storage` |
+| 3 | Update packages | `pkg update && pkg upgrade -y` |
+| 4 | Install Node.js | `pkg install -y git nodejs` |
+| 5 | Clone repo | `git clone https://github.com/sathxum/stripe-auto-hitter-v2.git` |
+| 6 | Install deps | `cd stripe-auto-hitter-v2 && npm install` |
+| 7 | Install Chrome | `pkg install -y chromium` |
+| 8 | Start server | `node server.js` |
+| 9 | Start tunnel | `cloudflared tunnel --url http://localhost:3000` |
+| 10 | Open URL | Copy URL to browser |
 
-### Public Folder (`public/`)
-| File | Purpose |
-|------|---------|
-| `index.html` | Mobile-friendly UI |
-| `app.js` | Frontend JavaScript |
-| `sw.js` | Service worker (PWA) |
-
-### Scripts Folder (`scripts/`)
-| File | Purpose |
-|------|---------|
-| `setup.sh` | VPS setup automation |
-| `start-tunnel.sh` | Cloudflare tunnel starter |
+### [📖 DETAILED TERMUX GUIDE](TERMUX_SETUP.md)
 
 ---
 
@@ -72,11 +66,11 @@ npm run tunnel
 # Start server
 ./start.sh
 
-# Start tunnel (in another terminal)
+# Start tunnel (another terminal)
 npm run tunnel
 
-# Or start both with PM2
-pm2 start server.js --name stripe-hitter
+# Or manual tunnel
+cloudflared tunnel --url http://localhost:3000
 
 # View logs
 tail -f logs/app.log
@@ -92,37 +86,48 @@ pkill -f 'node server.js' && ./start.sh
 
 ## 🔥 Pro Tips
 
-1. **Use tmux/screen** to keep server running after SSH disconnect
-   ```bash
-   tmux new -s stripe
-   ./start.sh
-   # Press Ctrl+B then D to detach
-   ```
+### Using tmux (keep running after disconnect):
+```bash
+# Install tmux
+pkg install tmux  # Termux
+apt install tmux  # VPS
 
-2. **Auto-start on boot**
-   ```bash
-   sudo systemctl enable stripe-hitter
-   ```
+# Start session
+tmux new -s stripe
 
-3. **Monitor with PM2**
-   ```bash
-   npm install -g pm2
-   pm2 start server.js --name stripe-hitter
-   pm2 save
-   pm2 startup
-   ```
+# Run server
+./start.sh
+
+# Detach: Ctrl+B, then D
+
+# Reattach later:
+tmux attach -t stripe
+```
+
+### Using PM2 (VPS only):
+```bash
+npm install -g pm2
+pm2 start server.js --name stripe-hitter
+pm2 save
+pm2 startup
+```
 
 ---
 
-## 📱 Access From Anywhere
+## 🆘 Troubleshooting
 
-Once tunnel is running, open the URL on:
-- 💻 Desktop browser
-- 📱 Mobile browser
-- 🔄 Share with team
-
-No installation needed!
+| Issue | Solution |
+|-------|----------|
+| "command not found" | Run `pkg install` for that package |
+| "Cannot find module" | Run `npm install` again |
+| "Port in use" | Run `pkill -f "node server.js"` |
+| "Chrome not found" | Install chromium: `pkg install chromium` |
+| Tunnel not working | Make sure server is running first |
 
 ---
 
 **Ready to go!** 🚀
+
+For detailed instructions, see:
+- [TERMUX_SETUP.md](TERMUX_SETUP.md) - Android setup
+- [README.md](README.md) - Full documentation
